@@ -18,6 +18,7 @@ const defaultOrigins = [
   "http://127.0.0.1:8080",
   "http://localhost:5173",
   "http://127.0.0.1:5173",
+  "https://examsync-u44w.vercel.app",
 ];
 
 const allowedOrigins = new Set([...defaultOrigins, ...envOrigins]);
@@ -31,7 +32,9 @@ app.use(
         return;
       }
 
-      if (allowedOrigins.has(origin)) {
+      const isVercelDeployment = /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
+
+      if (allowedOrigins.has(origin) || isVercelDeployment) {
         callback(null, true);
         return;
       }
@@ -41,6 +44,14 @@ app.use(
   })
 );
 app.use(express.json());
+
+app.get("/", (_req, res) => {
+  res.status(200).json({
+    status: "ok",
+    message: "ExamSync backend is running",
+    health: "/api/health",
+  });
+});
 
 app.get("/api/health", (_req, res) => {
   res.status(200).json({ status: "ok" });

@@ -23,26 +23,31 @@ const defaultOrigins = [
 
 const allowedOrigins = new Set([...defaultOrigins, ...envOrigins]);
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow same-origin tools/non-browser clients that do not send an Origin header.
-      if (!origin) {
-        callback(null, true);
-        return;
-      }
+const isAllowedOrigin = (origin) => {
+  if (!origin) {
+    return true;
+  }
 
-      const isVercelDeployment = /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
+  const isVercelDeployment = /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
+  return allowedOrigins.has(origin) || isVercelDeployment;
+};
 
-      if (allowedOrigins.has(origin) || isVercelDeployment) {
-        callback(null, true);
-        return;
-      }
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (isAllowedOrigin(origin)) {
+      callback(null, true);
+      return;
+    }
 
-      callback(new Error("Not allowed by CORS"));
-    },
-  })
-);
+    // Return a non-throwing rejection so unknown origins do not trigger a 500.
+    callback(null, false);
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 
 app.get("/", (_req, res) => {

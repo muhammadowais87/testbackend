@@ -18,7 +18,7 @@ const defaultOrigins = [
   "http://127.0.0.1:8080",
   "http://localhost:5173",
   "http://127.0.0.1:5173",
-  "https://examsync-u44w.vercel.app",
+  "https://brighttestsolution.vercel.app",
 ];
 
 const allowedOrigins = new Set([...defaultOrigins, ...envOrigins]);

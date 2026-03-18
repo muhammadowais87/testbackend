@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import net from "node:net";
-import app from "./app.js";
 import { connectDB } from "./config/db.js";
 
 dotenv.config();
@@ -46,6 +45,7 @@ const getAvailablePort = async (startPort) => {
 
 const startServer = async () => {
 	try {
+		const { default: app } = await import("./app.js");
 		await connectDB();
 		const port = await getAvailablePort(DEFAULT_PORT);
 		if (port !== DEFAULT_PORT) {

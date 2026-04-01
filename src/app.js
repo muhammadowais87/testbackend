@@ -29,7 +29,9 @@ const isAllowedOrigin = (origin) => {
   }
 
   const isVercelDeployment = /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
-  return allowedOrigins.has(origin) || isVercelDeployment;
+  const isDigitalOceanDeployment = /^https:\/\/[a-z0-9-]+\.ondigitalocean\.app$/i.test(origin);
+
+  return allowedOrigins.has(origin) || isVercelDeployment || isDigitalOceanDeployment;
 };
 
 const corsOptions = {
@@ -48,7 +50,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.get("/", (_req, res) => {
   res.status(200).json({

@@ -6,6 +6,7 @@ dotenv.config();
 
 const DEFAULT_PORT = Number(process.env.PORT) || 5000;
 const MAX_PORT_ATTEMPTS = 20;
+const HOST = process.env.HOST || "0.0.0.0";
 
 const isPortAvailable = (port) => {
 	return new Promise((resolve) => {
@@ -47,13 +48,16 @@ const startServer = async () => {
 	try {
 		const { default: app } = await import("./app.js");
 		await connectDB();
-		const port = await getAvailablePort(DEFAULT_PORT);
-		if (port !== DEFAULT_PORT) {
+
+		// Cloud providers route traffic to the exact PORT they inject.
+		const isCloudRuntime = process.env.NODE_ENV === "production" || Boolean(process.env.PORT);
+		const port = isCloudRuntime ? DEFAULT_PORT : await getAvailablePort(DEFAULT_PORT);
+		if (!isCloudRuntime && port !== DEFAULT_PORT) {
 			console.warn(`Port ${DEFAULT_PORT} busy. Using port ${port} instead.`);
 		}
 
-		app.listen(port, () => {
-			console.log(`Backend server running on port ${port}`);
+		app.listen(port, HOST, () => {
+			console.log(`Backend server running on ${HOST}:${port}`);
 		});
 	} catch (error) {
 		console.error("Server failed to start:", error.message);

@@ -56,7 +56,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.get("/", (_req, res) => {
   res.status(200).json({
     status: "ok",
-    message: "ExamSync backend is running",
+    message: "Apextestsolution backend is running",
     health: "/api/health",
   });
 });

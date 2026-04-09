@@ -1,7 +1,9 @@
 import cors from "cors";
 import express from "express";
 import instituteAuthRoutes from "./routes/instituteAuthRoutes.js";
+import questionBankRoutes from "./routes/questionBankRoutes.js";
 import queryRoutes from "./routes/queryRoutes.js";
+import savedPaperRoutes from "./routes/savedPaperRoutes.js";
 import schoolRoutes from "./routes/schoolRoutes.js";
 import teacherAuthRoutes from "./routes/teacherAuthRoutes.js";
 import teacherRoutes from "./routes/teacherRoutes.js";
@@ -70,5 +72,7 @@ app.use("/api/teachers", teacherRoutes);
 app.use("/api/institute-auth", instituteAuthRoutes);
 app.use("/api/schools", schoolRoutes);
 app.use("/api/queries", queryRoutes);
+app.use("/api/question-bank", questionBankRoutes);
+app.use("/api/saved-papers", savedPaperRoutes);
 
 export default app;
